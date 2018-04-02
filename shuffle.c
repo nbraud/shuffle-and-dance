@@ -1,5 +1,6 @@
 /* _GNU_SOURCE required (under glibc) to get reallocarray... */
 #define _GNU_SOURCE
+#include <assert.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -39,23 +40,23 @@ size_t *shuffle_gen(struct rand_t *r, size_t n) {
 
 // Fisher-Yates shuffle with larger interleaved batches
 #define UNROLL 32
-#include "duff.h"
 void shuffle_batch(struct rand_t *r, int t[], size_t n) {
   size_t i = 0;
   size_t u[UNROLL];
   size_t j;
-  DUFF32(n, {
-      j = 0;
-      for(size_t k = 0; k<UNROLL; ++k) {
-        u[k] = rand_int(r, UNROLL*i + k);
-      }
-    }, {
+
+  assert(n % UNROLL == 0); // Lazyyyyyyy
+  for(size_t i = 0; i<(n + UNROLL -1)/UNROLL; ++i) {
+    for(size_t j = 0; j<UNROLL; ++j) {
+      u[j] = rand_int(r, UNROLL*i + j +1);
+    }
+
+    for(size_t j = 0; j<UNROLL; ++j) {
       size_t k = u[j];
       int x = t[UNROLL*i + j];
       t[UNROLL*i + j] = t[k];
       t[k] = x;
-      j++;
-    }, { i++; }
-  );
+    }
+  }
 }
 
