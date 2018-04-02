@@ -1,5 +1,6 @@
 #include "rand.h"
 
+#include <assert.h>
 #include <string.h>
 #include <sodium.h>
 
