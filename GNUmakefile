@@ -7,3 +7,4 @@ clean:
 	git clean -dfX
 
 main: rand.o shuffle.o main.o
+	$(CXX) $^ $(LDARGS) $(LDLIBS) -o $@
