@@ -4,7 +4,7 @@ CXXFLAGS+= -DSIZE=$(SIZE)
 CFLAGS+= -DUNROLL=$(UNROLL)
 
 CFLAGS+= -O3
-CXXFLAGS+= -O3
+CXXFLAGS+= -O3 -std=c++14
 
 LDLIBS+= -lsodium
 
