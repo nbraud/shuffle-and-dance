@@ -14,6 +14,9 @@ size_t *shuffle_gen(struct rand_t *r, size_t n);
 // Fisher-Yates shuffle with larger interleaved batches
 void shuffle_batch(struct rand_t *r, int t[], size_t n);
 
+// Fisher-Yates shuffle with larger interleaved batches and prefetches
+void shuffle_prefetch(struct rand_t *r, int t[], size_t n);
+
 #ifdef __cplusplus
 }
 #endif

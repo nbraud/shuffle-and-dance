@@ -38,6 +38,13 @@ int main(void) {
       free(s);
     });
 
+  struct rand_t *r_pf = rand_dup(r);
+  bench.add("prefetched", [&r_pf, &t]() {
+      struct rand_t *s = rand_rand(r_pf);
+      shuffle_prefetch(s, t, SIZE);
+      free(s);
+    });
+
   bench.set_printer<geiger::printer::console<>>();
 
   // Run each test during one second

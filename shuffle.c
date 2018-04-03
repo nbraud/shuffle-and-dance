@@ -7,6 +7,20 @@
 #include "rand.h"
 
 
+// Some macros to deal with prefetching things
+#if defined(__clang__)
+# if __has_builtin(__builtin_prefetch)
+#  define PREFETCH(x) __builtin_prefetch(x, 1, 0)
+# endif
+#elif defined(__GNUC__)
+# define PREFETCH(x) __builtin_prefetch(x, 1, 0)
+#endif
+
+#ifndef PREFETCH
+# define PREFETCH(x) do { } while(0)
+#endif
+
+
 // Bog-standard Fisher-Yates shuffle
 void shuffle_std(struct rand_t *r, int t[], size_t n) {
   for(int i = 0; i < n; ++i) {
@@ -49,6 +63,7 @@ void shuffle_batch(struct rand_t *r, int t[], size_t n) {
   for(size_t i = 0; i<(n + UNROLL -1)/UNROLL; ++i) {
     for(size_t j = 0; j<UNROLL; ++j) {
       u[j] = rand_int(r, UNROLL*i + j +1);
+      PREFETCH(&t[u[j]]);
     }
 
     for(size_t j = 0; j<UNROLL; ++j) {
@@ -60,3 +75,28 @@ void shuffle_batch(struct rand_t *r, int t[], size_t n) {
   }
 }
 
+
+// Fisher-Yates shuffle with ahead-of-time prefetches
+void shuffle_prefetch(struct rand_t *r, int t[], size_t n) {
+  size_t u[UNROLL];
+  assert(n % UNROLL == 0); // Lazyyyyyyy
+
+  for(size_t i = 0; i<UNROLL; ++i) {
+    u[i] = rand_int(r, i+1);
+    PREFETCH(&t[u[i]]);
+  }
+
+  for(size_t i = 0; i<n; ++i) {
+    size_t k = u[i % UNROLL];
+
+    if(i < n-UNROLL) {
+      size_t l = rand_int(r, i+UNROLL+1);
+      PREFETCH(&t[l]);
+      u[i % UNROLL] = l;
+    }
+
+    int x = t[i];
+    t[i] = t[k];
+    t[k] = x;
+  }
+}
