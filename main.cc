@@ -48,7 +48,7 @@ int main(void) {
   bench.set_printer<geiger::printer::console<>>();
 
   // Run each test during one second
-  bench.run();
+  bench.run(std::chrono::seconds(30));
 
   return 0;
 }
