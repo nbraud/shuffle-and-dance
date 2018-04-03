@@ -4,7 +4,9 @@
 #include "rand.h"
 #include "shuffle.h"
 
-#define SIZE 100000
+#ifndef SIZE
+# define SIZE 100000
+#endif
 
 int main(void) {
   geiger::init();

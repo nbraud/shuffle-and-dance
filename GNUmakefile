@@ -1,3 +1,11 @@
+SIZE=100000
+UNROLL=32
+CXXFLAGS+= -DSIZE=$(SIZE)
+CFLAGS+= -DUNROLL=$(UNROLL)
+
+CFLAGS+= -O3
+CXXFLAGS+= -O3
+
 LDLIBS+= -lsodium
 
 .PHONY: default clean run

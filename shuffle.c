@@ -39,11 +39,11 @@ size_t *shuffle_gen(struct rand_t *r, size_t n) {
 
 
 // Fisher-Yates shuffle with larger interleaved batches
-#define UNROLL 32
+#ifndef UNROLL
+# define UNROLL 32
+#endif
 void shuffle_batch(struct rand_t *r, int t[], size_t n) {
-  size_t i = 0;
   size_t u[UNROLL];
-  size_t j;
 
   assert(n % UNROLL == 0); // Lazyyyyyyy
   for(size_t i = 0; i<(n + UNROLL -1)/UNROLL; ++i) {
