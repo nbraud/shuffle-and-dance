@@ -39,7 +39,7 @@ struct rand_t *rand_dup(struct rand_t *r) {
 }
 
 /* Return a uniformly-random 64bit integer */
-uint64_t rand_int64(struct rand_t *r) {
+static inline uint64_t rand_int64(struct rand_t *r) {
   uint64_t k[randombytes_SEEDBYTES/sizeof(uint64_t) +1];
   randombytes_buf_deterministic((unsigned char*)&k, sizeof(k), r->k);
   memcpy(r->k, k+1, randombytes_SEEDBYTES);
@@ -56,7 +56,7 @@ uint64_t rand_int64(struct rand_t *r) {
 # define HAS_CLZ
 #endif
 
-uint64_t bitmask(uint64_t v) {
+static inline uint64_t bitmask(uint64_t v) {
 #ifndef HAS_CLZ
   /* Adapted from Sean Anderson's Bit Twiddling Hacks collection:
    * https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
