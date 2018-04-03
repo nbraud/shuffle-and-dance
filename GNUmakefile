@@ -1,6 +1,6 @@
 LDLIBS+= -lsodium
 
-.PHONY: default clean
+.PHONY: default clean run
 default: main
 
 clean:
@@ -8,3 +8,6 @@ clean:
 
 main: rand.o shuffle.o main.o
 	$(CXX) $^ $(LDARGS) $(LDLIBS) -o $@
+
+run: main
+	taskset -c 1 ./main
