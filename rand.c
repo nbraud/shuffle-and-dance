@@ -46,8 +46,18 @@ uint64_t rand_int64(struct rand_t *r) {
   return k[0];
 }
 
+
 /* Compute the smallest 2^n -1 larger than v */
+#if defined(__clang__)
+# if __has_builtin(__builtin_clz)
+#  define HAS_CLZ
+# endif
+#elif defined(__GNUC__)
+# define HAS_CLZ
+#endif
+
 uint64_t bitmask(uint64_t v) {
+#ifndef HAS_CLZ
   /* Adapted from Sean Anderson's Bit Twiddling Hacks collection:
    * https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
    */
@@ -60,6 +70,9 @@ uint64_t bitmask(uint64_t v) {
   v |= v >> 32;
 
   return v;
+#else
+  return (1 << (64 - __builtin_clz(v))) -1;
+#endif
 }
 
 
