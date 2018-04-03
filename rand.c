@@ -21,6 +21,17 @@ struct rand_t *rand_new(void) {
   return r;
 }
 
+struct rand_t *rand_rand(struct rand_t *r) {
+  struct rand_t *s = malloc(sizeof(struct rand_t));
+
+  char k[2 * randombytes_SEEDBYTES];
+  randombytes_buf_deterministic((unsigned char*)&k, sizeof(k), r->k);
+
+  memcpy(r->k, k, randombytes_SEEDBYTES);
+  memcpy(s->k, k + randombytes_SEEDBYTES, randombytes_SEEDBYTES);
+  return s;
+}
+
 struct rand_t *rand_dup(struct rand_t *r) {
   struct rand_t *s = malloc(sizeof(struct rand_t));
   memcpy(s->k, r->k, randombytes_SEEDBYTES);

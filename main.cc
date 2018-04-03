@@ -16,21 +16,24 @@ int main(void) {
   int t[SIZE];
   struct rand_t *r = rand_new();
 
-  bench.add("standard", [&r, &t]() {
-      struct rand_t *s = rand_dup(r);
+  struct rand_t *r_s = rand_dup(r);
+  bench.add("standard", [&r_s, &t]() {
+      struct rand_t *s = rand_rand(r_s);
       shuffle_std(s, t, SIZE);
       free(s);
     });
 
-  bench.add("precalc", [&r, &t]() {
-      struct rand_t *s = rand_dup(r);
+  struct rand_t *r_pc = rand_dup(r);
+  bench.add("precalc", [&r_pc, &t]() {
+      struct rand_t *s = rand_rand(r_pc);
       size_t *u = shuffle_gen(s, SIZE);
       shuffle_ind(t, u, SIZE);
       free(s);
     });
 
-  bench.add("batched", [&r, &t]() {
-      struct rand_t *s = rand_dup(r);
+  struct rand_t *r_b = rand_dup(r);
+  bench.add("batched", [&r_b, &t]() {
+      struct rand_t *s = rand_rand(r_b);
       shuffle_batch(s, t, SIZE);
       free(s);
     });
